@@ -81,26 +81,49 @@ object hw01 extends App:
   /* Exercises */
 
   def abs(n: Double): Double =
-    ???
+    if n >= 0 then n else 0-n
 
   def ar(p: Int): Int =
-    ???
+    if p < 0 then 1+ar(0-p) // negative sign
+    else if p/10 == 0 then 1 else 1+ar(p/10)
 
-  def rep(s: String, t: String, n: Int): String =
+  def repRec(s: String, t: String, n: Int, acc: String): String = {
     require (n >= 0)
-    ???
+    if n==0 then ""
+    else if n==1 then acc
+    else repRec(s,t,n-1,acc+t+s)
+  }
 
+  def rep(s: String, t: String, n: Int): String = {
+    require (n >= 0)
+    repRec(s, t, n, s)
+  }
 
   def approx(c: Double, xn: Double): Double =
-    ???
+    xn - (((xn*xn*xn)-c)/(3*xn*xn))
 
-  def approxN(c: Double, xn: Double, n: Int): Double =
+  def approxNRec(c: Double, x0: Double, n: Int, acc: Double): Double = {
     require(n >= 0)
-    ???
+    if n == 0 then x0
+    else if n == 1 then approx(c, acc)
+    else approxNRec(c, x0, n-1, approx(c, acc))
+  }
 
-  def approxErr(c: Double, xn: Double, epsilon: Double): Double =
+  def approxN(c: Double, x0: Double, n: Int): Double = {
+    require(n >= 0)
+    approxNRec(c, x0, n, x0)
+  }
+
+  def approxErrRec(c: Double, x0: Double, epsilon: Double, acc: Double, error: Double): Double = {
     require (epsilon > 0)
-    ???
+    if error < epsilon then acc
+    else approxErrRec(c, x0, epsilon, approx(c, acc), abs(acc-(c/(acc*acc))))
+  }
+
+  def approxErr(c: Double, x0: Double, epsilon: Double): Double = {
+    require (epsilon > 0)
+    approxErrRec(c, x0, epsilon, x0, abs(x0-(c/(x0*x0))))
+  }
 
   def root(c: Double): Double =
     approxErr(c, 1.0, 0.0001)
